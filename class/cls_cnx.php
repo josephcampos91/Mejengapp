@@ -1,15 +1,15 @@
 <?php
 /**
-* 
+*
 */
 //echo "cls_cnx";
 //echo "<br>";
-class cls_cnx 
+class cls_cnx
 {
-	private $servername = "localhost";
-	private $username = "bandeco4_admin";
-	private $password = "M%sf.tnT#M+{";
-	private $dbname = "bandeco4_db_security";
+	private $servername = "50.62.176.220";
+	private $username = "mejengapp_user";
+	private $password = "12345678";
+	private $dbname = "bd_mejengapp";
 	public $conn = null;
 	function __construct()
 	{
@@ -64,12 +64,12 @@ $string ="INSERT INTO `user_login`( `user_id`, `user_name`,`user_last_name`, `us
 		//}
 		return $num;
 	}
-	function update($sql){		
-	    $num = $this->conn->query($sql);		
+	function update($sql){
+	    $num = $this->conn->query($sql);
 		return $num;
 	}
-	function delete($sql){		
-	    $num = $this->conn->query($sql);		
+	function delete($sql){
+	    $num = $this->conn->query($sql);
 		return $num;
 	}
 	function data($sql){

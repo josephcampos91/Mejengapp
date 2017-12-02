@@ -1,7 +1,7 @@
 <?php
-
+include("cls_log.php");
 /**
-* 
+*
 */
 //echo "cls_login";
 //echo "<br>";
@@ -28,22 +28,29 @@ class cls_login
   public function __construct($p_user_id,$p_user_pass){
     $this->set_user_id( $p_user_id );
     $this->set_user_pass(base64_encode($p_user_pass));
+
   }
-    
+
 	public function validar(){
-    $string ="select * from user_login where user_id ='".$this->get_user_id()."' and user_pass = '".$this->get_user_pass()."' and user_status = 1;";
+
+		//cls_log::info('Entro a validar');
+
+		$string ="select * from user_login where user_id ='".$this->get_user_id()."' and user_pass = '".$this->get_user_pass()."' and user_status = 1;";
+
+		//cls_log::info(addslashes($string));
 	  $obj_cnx = new cls_cnx();
     $num = 0;
 		$result = $obj_cnx->data($string);
     if ($result == 0) {
      $resul ="<h1>Invalido</h1>";
+
     }else{
       $resul ="<h1>Logueado</h1>";
       if ($result->num_rows > 0) {
     // output data of each row
         while($row = $result->fetch_assoc()) {
           //echo "user_id: " . $row["user_id"]. " - user_pass: " . $row["user_pass"]."<br>";
-          //echo $resul;
+          echo $resul;
           session_start();
           //echo
           $_SESSION["login"] = null;
@@ -53,7 +60,7 @@ class cls_login
         }
       } else {
          // echo "0 results";
-          //echo $resul;
+          echo $resul;
       }
     }
     //return $resul;
@@ -62,7 +69,7 @@ class cls_login
     echo password_hash($user_password, PASSWORD_DEFAULT);
   }
 	public function show(){
-		 
+
 		echo "su clave es ".$this->get_user_pass();
     echo "<br>";
     echo "su id es ".$this->get_user_id();
