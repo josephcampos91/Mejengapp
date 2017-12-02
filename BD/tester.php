@@ -17,6 +17,7 @@
 		$bd = "bd_mejengapp";
 
 		echo "Servidor WEB: ".$webserver;
+		echo html_entity_decode("<br/>");
 		echo "Servidor BD: ".$servername.":".$port;
 		echo html_entity_decode("<br/>");
 		echo "Usuario: ".$username;

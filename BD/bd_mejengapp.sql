@@ -112,8 +112,10 @@ INSERT INTO `ligue` (`id`, `nombre`) VALUES
 CREATE TABLE `partido` (
   `id` int(11) NOT NULL,
   `fk_jugador_x_equipo_1` int(11) NOT NULL,
+  `goles_jugador_1` int(11) NOT NULL,
   `puntos_jugador_1` int(11) NOT NULL,
   `fk_jugador_x_equipo_2` int(11) NOT NULL,
+  `goles_jugador_2` int(11) NOT NULL,
   `puntos_jugador_2` int(11) NOT NULL,
   `turno` int(11) NOT NULL,
   `fk_torneo` int(11) NOT NULL
@@ -129,6 +131,7 @@ CREATE TABLE `torneo` (
   `id` int(11) NOT NULL,
   `nombre` varchar(250) NOT NULL,
   `fecha` date NOT NULL,
+  `turno_actual` int(11) NOT NULL,
   `fk_user` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
