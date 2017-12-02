@@ -9,19 +9,21 @@
 	<h3>Prueba de conexi&oacute;n a la base de datos:</h3>
 	<p>
 		<?php
+		$webserver = $_SERVER['SERVER_ADDR'];
 		$servername = "50.62.176.220";
 		$port = "3306";
 		$username = "mejengapp_user";
 		$password = "12345678";
 		$bd = "bd_mejengapp";
 
-		echo "Servidor: ".$servername.":".$port;
+		echo "Servidor WEB: ".$webserver;
+		echo "Servidor BD: ".$servername.":".$port;
 		echo html_entity_decode("<br/>");
 		echo "Usuario: ".$username;
 		echo html_entity_decode("<br/>");
 		echo "Base de datos: ".$bd;
 
-        ?>
+		?>
 
 	</p>
 	<p style="color:red; font-weight:bolder">
