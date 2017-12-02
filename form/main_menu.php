@@ -5,13 +5,13 @@
 			<nav>
 				<ul class="nav nav-pills float-right">
 					<li class="nav-item">
-						<a class="nav-link active" href="http://localhost:8081/mejengapp/index.php">
+						<a class="nav-link active" href="https://mejeng-app.herokuapp.com/index.php">
 							Home
 							<span class="sr-only">(current)</span>
 						</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="http://localhost:8081/mejengapp/form/login_form.php">Log in</a>
+						<a class="nav-link" href="https://mejeng-app.herokuapp.com/form/login_form.php">Log in</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="#">Consultar Torneo</a>
