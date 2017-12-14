@@ -1,26 +1,22 @@
-<?php
-
-/*session_start();
- if($_SESSION['login'] == null){
-header("location: ../form/login_form.php");
-}
-*/
-session_start();
-$msj = "";
-  if ($_SESSION['add_user'] == 1) {
-     $msj ="Usuario ingresado correctamente";
-     $color_alert = "green";
-  }if($_SESSION['add_user'] == 0){
-    $msj = "No se a ingresado ningun usuario";
-    $color_alert = "red";
-  }
-  $_SESSION['add_user'] = null;
-  
-?>
-
+<?php //include("validate.php"); ?>
 <?php include("header.php");?> 
 <?php include("main_menu.php");?> 
-<a href="welcome.php">Back</a>
+<?php
+$msj = "";
+  if ($_SESSION['success_op'] == 1) {
+     $msj ="Success";
+     $color_alert = "green";
+  }if($_SESSION['success_op'] == 0){
+    $msj = "No se ha manipulado ningun dato";
+    $color_alert = "red";
+  }
+  if($_SESSION['success_op'] == 2){
+    $msj = "Ya existe un usuario con este nombre";
+    $color_alert = "orange";
+  }  
+?>
+<?php $_SESSION['success_op'] = null; ?>
+
 <span style="background: yellow;color: <?php echo $color_alert;?>;" ><?php echo $msj ; ?></span>
 <form action="../class/cls_gestor.php" class="form-signin" method = "post">
   <fieldset>

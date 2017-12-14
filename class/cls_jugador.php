@@ -27,34 +27,53 @@ class cls_jugador
   function __construct($p_name){
     $this->set_name($p_name);
   }
-
-  function insert(){
-    $string ="INSERT INTO `jugador`(`nombre`,`fk_user`,`estado`) VALUES (
-    '".$this->get_name()."',
-    ".$_SESSION['login']['id'].",
-    1
-     )";
+  function valida_name(){
       $obj_cnx = new cls_cnx();
-      $result = $obj_cnx->insert($string);
-     return $result;
-  }
-    function show(){
-    $string ="SELECT `id`, `nombre`, `fk_user` FROM `jugador` where fk_user = ".$_SESSION['login']['id']." and `estado` = 1 ";
-      $obj_cnx = new cls_cnx();
+      $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
+      $name1 = $obj_cnx->conn->real_escape_string($this->get_name());
+      $string ="SELECT * FROM `jugador` where nombre ='".$name1."' and fk_user = ".$login_id_1;
       $result = $obj_cnx->data($string);
-     return $result;
+
+      return $result;
+
+  }
+  function insert(){
+    $obj_cnx = new cls_cnx();
+    $name1 = $obj_cnx->conn->real_escape_string($this->get_name());
+    $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
+
+    $string ="INSERT INTO `jugador`(`nombre`,`fk_user`,`estado`) VALUES (
+    '".$name1."',
+    ".$login_id_1.",
+    1
+    )";
+    $result = $obj_cnx->insert($string);
+    return $result;
+  }
+  function show(){
+    $obj_cnx = new cls_cnx();
+    $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
+
+    $string ="SELECT `id`, `nombre`, `fk_user` FROM `jugador` where fk_user = ".$login_id_1." and `estado` = 1 ";
+    $result = $obj_cnx->data($string);
+    return $result;
   }
   function update($edit_id){
-    $string ="UPDATE `jugador` SET `nombre`='".$this->get_name()."' WHERE `id` = ".$edit_id ;
-          $obj_cnx = new cls_cnx();
-          $result = $obj_cnx->update($string);
-         return $result;
+    $obj_cnx = new cls_cnx();
+    $edit_id1 = $obj_cnx->conn->real_escape_string($edit_id);
+    $name1 = $obj_cnx->conn->real_escape_string($this->get_name());
+
+    $string ="UPDATE `jugador` SET `nombre`='".$name1."' WHERE `id` = ".$edit_id1 ;
+    $result = $obj_cnx->update($string);
+    return $result;
   }
   function delete($edit_id){
-    $string ="UPDATE `jugador` SET `estado`=0 WHERE `id` = ".$edit_id ;
-          $obj_cnx = new cls_cnx();
-          $result = $obj_cnx->delete($string);
-         return $result;
+    $obj_cnx = new cls_cnx();
+    $edit_id1 = $obj_cnx->conn->real_escape_string($edit_id);
+
+    $string ="UPDATE `jugador` SET `estado`=0 WHERE `id` = ".$edit_id1 ;
+    $result = $obj_cnx->delete($string);
+   return $result;
   }
 
 

@@ -81,18 +81,11 @@ class cls_user
   }
   function __construct($p_user_id,$p_user_name,$p_user_last_name,$p_user_pass,$p_user_email){
     $this->set_user_id($p_user_id);
-     $this->set_user_name($p_user_name);
-     $this->set_user_last_name($p_user_last_name);
-     //$this->set_user_pass_1($p_user_pass_1);  
-     //$this->set_user_pass_2($p_user_pass_2);   
-     $this->set_user_pass(base64_encode($p_user_pass));  
-     $this->set_user_email($p_user_email);
-     //$this->set_user_status($p_user_status);
-     //$this->set_user_session($p_user_session);
-     //$this->set_user_roll($p_user_roll);
-
-  }//$p_user_id,$p_user_name,$p_user_last_name,$p_user_pass_1,$p_user_pass_2,$p_user_email,$p_user_status,$p_user_session,$p_user_roll
-  
+    $this->set_user_name($p_user_name);
+    $this->set_user_last_name($p_user_last_name);
+    $this->set_user_pass(base64_encode($p_user_pass));  
+    $this->set_user_email($p_user_email);
+  } 
 
   function script_create_table(){
     $create_table ="
@@ -112,89 +105,76 @@ class cls_user
     ";
     return $create_table;
   }
-  function insert(){//`user_id`, `user_name`,`user_last_name`, `user_pass`, `date`, `user_email`, `user_status`, `user_session`,`user_roll`
-    /*
-'".get_user_id()."',
-    '".get_user_name()."',
-    '".get_user_last_name()."',
-    '".get_user_pass()."',
-    "'NOW()'",
-    '".get_user_email()."',
-    ".get_user_status().",
-    ".get_user_session().",
-    ".get_user_roll()."
+  
+  function valida_user(){
+    $obj_cnx = new cls_cnx();
+    $pid1 = $obj_cnx->conn->real_escape_string($this->get_user_id());
 
-     )";
-    */
-    $string ="INSERT INTO `user_login`( `user_id`, `user_name`,`user_last_name`, `user_pass`,`user_email`,`user_status`) VALUES (
-    '".$this->get_user_id()."',
-    '".$this->get_user_name()."',
-    '".$this->get_user_last_name()."',
-    '".$this->get_user_pass()."',
-    '".$this->get_user_email()."',
-    1
+    $string ="SELECT * FROM `user_login` where user_id = '".$pid1."'";
+    $result = $obj_cnx->data($string);
 
-     )";
+    return $result;
 
-        $obj_cnx = new cls_cnx();
-        $pid1 = $obj_cnx->conn->real_escape_string($this->get_user_id());
-        $pname1 = $obj_cnx->conn->real_escape_string($this->get_user_name());
-        $plasna1 = $obj_cnx->conn->real_escape_string($this->get_user_last_name());
-        $pas1 = $obj_cnx->conn->real_escape_string($this->get_user_pass());
-        $email1 = $obj_cnx->conn->real_escape_string($this->get_user_email());
+  }
+  function insert(){
+    $obj_cnx = new cls_cnx();
+    $pid1 = $obj_cnx->conn->real_escape_string($this->get_user_id());
+    $pname1 = $obj_cnx->conn->real_escape_string($this->get_user_name());
+    $plasna1 = $obj_cnx->conn->real_escape_string($this->get_user_last_name());
+    $pas1 = $obj_cnx->conn->real_escape_string($this->get_user_pass());
+    $email1 = $obj_cnx->conn->real_escape_string($this->get_user_email());
         
-        $string ="INSERT INTO `user_login`( `user_id`, `user_name`,`user_last_name`, `user_pass`,`user_email`,`user_status`) VALUES (
+    $string ="INSERT INTO `user_login`( `user_id`, `user_name`,`user_last_name`, `user_pass`,`user_email`,`user_status`) VALUES (
     '".$pid1."',
     '".$pname1."',
     '".$plasna1."',
     '".$pas1."',
     '".$email1."',
     1
+    )";
 
-     )";
-     
-     
-      //$result = $obj_cnx->insertUser($this->get_user_id(),$this->get_user_name(),$this->get_user_last_name(),$this->get_user_pass(),$this->get_user_email());
-     //return $result;
-     
-     $result = $obj_cnx->insert($string);
-     return $result;
+    $result = $obj_cnx->insert($string);
+    return $result;
   }
-    function consultar(){
-$string ="INSERT INTO `user_login`( `user_id`, `user_name`,`user_last_name`, `user_pass`,`user_email`) VALUES (
-    '".$this->get_user_id()."',
-    '".$this->get_user_name()."',
-    '".$this->get_user_last_name()."',
-    '".$this->get_user_pass()."',
-    '".$this->get_user_email()."'
+  function show(){
+    $obj_cnx = new cls_cnx();
+    $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
 
-     )";
-     return $string;
+    $string ="SELECT * FROM `user_login` where id = ".$login_id_1;
+    $result = $obj_cnx->data($string);
 
-    }
-        function show(){
-    $string ="SELECT * FROM `user_login` where id = ".$_SESSION['login']['id'];
-      $obj_cnx = new cls_cnx();
-      $result = $obj_cnx->data($string);
-     return $result;
+    return $result;
   }
   function delete(){
-    $string ="UPDATE `user_login` SET `user_status` = 0 where id = ".$_SESSION['login']['id'];
-      $obj_cnx = new cls_cnx();
-      $result = $obj_cnx->delete($string);
-     return $result;
+    $obj_cnx = new cls_cnx();
+    $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
+
+    $string ="UPDATE `user_login` SET `user_status` = 0 where id = ".$login_id_1;
+    $result = $obj_cnx->delete($string);
+
+    return $result;
   }
-    function update(){
-    $string ="UPDATE `user_login` SET `user_name` = '".$this->get_user_name()."',`user_last_name` = '".$this->get_user_last_name()."',`user_email` = '".$this->get_user_email()."' where id = ".$_SESSION['login']['id'];
-      $obj_cnx = new cls_cnx();
-      $result = $obj_cnx->update($string);
-     return $result;
+  function update(){
+    $obj_cnx = new cls_cnx();
+    $pname1 = $obj_cnx->conn->real_escape_string($this->get_user_name());
+    $plasna1 = $obj_cnx->conn->real_escape_string($this->get_user_last_name());
+    $email1 = $obj_cnx->conn->real_escape_string($this->get_user_email());
+    $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
+
+    $string ="UPDATE `user_login` SET `user_name` = '".$pname1."',`user_last_name` = '".$plasna1."',`user_email` = '".$email1."' where id = ".$login_id_1;
+    $result = $obj_cnx->update($string);
+
+    return $result;
   }
-function updateClave($encodepass){
-    $string ="UPDATE `user_login` SET `user_pass` = '".$encodepass."' where id = ".$_SESSION['login']['id'];
-      $obj_cnx = new cls_cnx();
-      $result = $obj_cnx->update($string);
-     return $result;
+  function updateClave($encodepass){
+    $obj_cnx = new cls_cnx();
+    $pas1 = $obj_cnx->conn->real_escape_string($encodepass);
+    $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
+
+    $string ="UPDATE `user_login` SET `user_pass` = '".$pas1."' where id = ".$login_id_1;
+    $result = $obj_cnx->update($string);
+
+    return $result;
   }
 
 
