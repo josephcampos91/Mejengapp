@@ -1,11 +1,13 @@
-<?php 
-session_start();
+<?php
+
 if($_SESSION['login'] == null){
-  header("location: ../form/login_form.php");
+	header("location: login_form.php");
 }else{
-	if(time() < $_SESSION['timein']){}
-		else{ 
-			header("location: ../class/exit.php");
-		}
+	if(time() < $_SESSION['timein']){
+		
+	}
+	else{
+		header("location: ../class/exit.php");
+	}
 }
 ?>

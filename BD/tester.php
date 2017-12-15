@@ -12,9 +12,9 @@
 		$webserver = $_SERVER['SERVER_ADDR'];
 		$servername = "50.62.176.220";
 		$port = "3306";
-		$username = "mejengapp_user";
-		$password = "12345678";
-		$bd = "bd_mejengapp";
+		$username = "bandeco4_user";
+		$password = "12345";
+		$bd = "bandeco4_db_security";
 
 		echo "Servidor WEB: ".$webserver;
 		echo html_entity_decode("<br/>");

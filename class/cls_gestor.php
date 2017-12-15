@@ -1,5 +1,6 @@
 <?php
 include("cls_cnx.php");
+include("cls_log.php");
 include("cls_admin.php");
 include("cls_user.php");
 include("cls_jugador.php");
@@ -8,15 +9,22 @@ include("cls_torneo.php");
 include("cls_partido.php");
 include("cls_juego.php");
 include("cls_jugador_equipo.php");
-session_start();
+//session_start();
+
+cls_log::info("gestor = ".$_POST['gestor']);
+
 if ($_POST['gestor'] == 0) {//login
-   $_SESSION["login"] = null;  
+	cls_log::info("login");
+	cls_log::info("user_id".$_POST['user_id']);
+	cls_log::info("user_pass".$_POST['user_pass']);
+   $_SESSION["login"] = null;
 
    $obj_login = new cls_login($_POST['user_id'] ,$_POST['user_pass'] );
    $obj_login->validar();
    if ($_SESSION["login"] != null) {
+	  // print_r($_SESSION['login']["user_id"]);
       header("Location: ../form/welcome.php");
-      die();
+      //die();
    }else{
    	$_SESSION['success_op'] =1;
       header("Location: ../form/login_form.php");
@@ -27,6 +35,9 @@ if ($_POST['gestor'] == 0) {//login
 /* USER
 /********************************************************************/
 if ($_POST['gestor'] == 1) {//add user
+	cls_log::info("add user");
+
+
 	$obj_cnx = new cls_cnx();
 	$valida_session = $obj_cnx->valida_session();
 	if ($valida_session == 1) {
@@ -36,20 +47,20 @@ if ($_POST['gestor'] == 1) {//add user
 			 $_SESSION['success_op'] = 2;
 		}else{
 			$resul = $obj_user->insert();//consultar
-			if ( $resul > 0) {   
-			   $_SESSION['success_op'] = 1;   
+			if ( $resul > 0) {
+			   $_SESSION['success_op'] = 1;
 			}
-			else{	    
+			else{
 			   $_SESSION['success_op'] = 0;
 			}
 		}
-		
+
 		header("location: ../form/user_form.php");
 	}else{
 		header("location: ../class/exit.php");
 	}
 
-	
+
 }
 /********************************************************************/
 /* ADMIN
@@ -64,18 +75,18 @@ if ($_POST['gestor'] == 9) {// user admin
 
 		$obj_admin = new cls_admin($edit_id,$ad_status,$ad_roll);
 		$resul = $obj_admin->update();//consultar
-		if ( $resul > 0) {   
-			$_SESSION['success_op'] = 1;   
+		if ( $resul > 0) {
+			$_SESSION['success_op'] = 1;
 		}
-		else{	    
+		else{
 			$_SESSION['success_op'] = 0;
 		}
 		header("location: ../form/admin_form.php");
 	}else{
 		header("location: ../class/exit.php");
 	}
-	 
-	
+
+
 }
 
 
@@ -85,17 +96,17 @@ if ($_POST['gestor'] == 9) {// user admin
 if ($_POST['gestor'] == 2) {//add jugador
 	$obj_cnx = new cls_cnx();
 	$valida_session = $obj_cnx->valida_session();
-	if ($valida_session == 1) {		
+	if ($valida_session == 1) {
 		$obj_jugador = new cls_jugador($_POST['jname']);
 		$resul_valida_name = $obj_jugador->valida_name();
 		if ($resul_valida_name->num_rows > 0) {
 			 $_SESSION['success_op'] = 2;
 		}else{
 			$resul = $obj_jugador->insert();//consultar
-			 if ( $resul > 0) {   
-			   $_SESSION['success_op'] = 1;   
+			 if ( $resul > 0) {
+			   $_SESSION['success_op'] = 1;
 			}
-			else{	    
+			else{
 			   $_SESSION['success_op'] = 0;
 			}
 		}
@@ -107,7 +118,7 @@ if ($_POST['gestor'] == 2) {//add jugador
 if ($_POST['gestor'] == 22) {//edit jugador
 	$obj_cnx = new cls_cnx();
 	$valida_session = $obj_cnx->valida_session();
-	if ($valida_session == 1) {	
+	if ($valida_session == 1) {
 
 		$edit_id = $_POST['edit'];
 		$jname = $_POST['jname'];
@@ -115,14 +126,14 @@ if ($_POST['gestor'] == 22) {//edit jugador
 		$resul_valida_name = $obj_jugador->valida_name();
 		if ($resul_valida_name->num_rows > 0) {
 			 $_SESSION['success_op'] = 2;
-		}else{			
+		}else{
 			$resul = $obj_jugador->update($edit_id);//consultar
-			 if ( $resul > 0) {   
-			  	$_SESSION['success_op'] = 1;  
+			 if ( $resul > 0) {
+			  	$_SESSION['success_op'] = 1;
 			}
-			else{	    
+			else{
 			  	$_SESSION['success_op'] = 0;
-			}			
+			}
 		}
 		header("location: ../form/jugador_form.php");
 	}else{
@@ -132,7 +143,7 @@ if ($_POST['gestor'] == 22) {//edit jugador
 if ($_POST['gestor'] == 2222) {//edit jugador
 	$obj_cnx = new cls_cnx();
 	$valida_session = $obj_cnx->valida_session();
-	if ($valida_session == 1) {	
+	if ($valida_session == 1) {
 		$edit_id = $_POST['edit_id'];
 		$jname = $_POST['jname'];
 		$_SESSION['success_op'] = "11";
@@ -146,18 +157,18 @@ if ($_POST['gestor'] == 2222) {//edit jugador
 if ($_POST['gestor'] == 222) {//delete jugador
 	$obj_cnx = new cls_cnx();
 	$valida_session = $obj_cnx->valida_session();
-	if ($valida_session == 1) {	
+	if ($valida_session == 1) {
 
 		$edit_id = $_POST['edit_id'];
 		$jname = $_POST['jname'];
 		$obj_jugador = new cls_jugador($jname);
 		$resul = $obj_jugador->delete($edit_id);//consultar
-		 if ( $resul > 0) {   
-		  	$_SESSION['success_op'] = 1;  
+		 if ( $resul > 0) {
+		  	$_SESSION['success_op'] = 1;
 		}
-		else{	    
+		else{
 		  	$_SESSION['success_op'] = 0;
-		} 
+		}
 		header("location: ../form/jugador_form.php");
 	}else{
 		header("location: ../class/exit.php");
@@ -177,10 +188,10 @@ if ($_POST['gestor'] == 3) {//add torneo
 			 $_SESSION['success_op'] = 2;
 		}else{
 			$resul = $obj_torneo->insert();//consultar
-			 if ( $resul > 0) {   
-			   $_SESSION['success_op'] = 1;   
+			 if ( $resul > 0) {
+			   $_SESSION['success_op'] = 1;
 			}
-			else{	    
+			else{
 			   $_SESSION['success_op'] = 0;
 			}
 		}
@@ -203,12 +214,12 @@ if ($_POST['gestor'] == 33) {//edit torneo
 			 $_SESSION['success_op'] = 2;
 		}else{
 			$resul = $obj_torneo->update($edit_id);//consultar
-			 if ( $resul > 0) {   
-			  	$_SESSION['success_op'] = 1;  
+			 if ( $resul > 0) {
+			  	$_SESSION['success_op'] = 1;
 			}
-			else{	    
+			else{
 			  	$_SESSION['success_op'] = 0;
-			}			
+			}
 		}
 		header("location: ../form/torneo_form.php");
 	}else{
@@ -240,12 +251,12 @@ if ($_POST['gestor'] == 333) {//delete TORNEO
 		$turno =1;
 		$obj_torneo = new cls_torneo($jname,$turno);
 		$resul = $obj_torneo->delete($edit_id);//consultar
-		 if ( $resul > 0) {   
-		  	$_SESSION['success_op'] = 1;  
+		 if ( $resul > 0) {
+		  	$_SESSION['success_op'] = 1;
 		}
-		else{	    
+		else{
 		  	$_SESSION['success_op'] = 0;
-		} 
+		}
 		header("location: ../form/torneo_form.php");
 	}else{
 		header("location: ../class/exit.php");
@@ -269,12 +280,12 @@ if ($_POST['gestor'] == 4) {//edit cuenta
 		$user_email = $_POST['user_email'];
 		$obj_user = new cls_user($user_id,$user_name,$user_last_name,0,$user_email);
 		$resul = $obj_user->update();//consultar
-		 if ( $resul > 0) {   
-		  	$_SESSION['success_op'] = "1"; 
+		 if ( $resul > 0) {
+		  	$_SESSION['success_op'] = "1";
 		}
-		else{	    
+		else{
 		  	$_SESSION['success_op'] = "0";
-		} 
+		}
 		header("location: ../form/cuenta_form.php");
 	}else{
 		header("location: ../class/exit.php");
@@ -288,19 +299,19 @@ if ($_POST['gestor'] == 4444) {//cambiar clave cuenta
 		$pw1 = $_POST['pw1'];
 		$pw2 = $_POST['pw2'];
 		if ($pw1 == $pw2) {
-			 
+
 			$obj_user = new cls_user(0,0,0,0,0);
 			$resul = $obj_user->updateClave(base64_encode($pw1));//consultar
-			if ( $resul > 0) {   
-			  	$_SESSION['success_op'] = "1"; 
+			if ( $resul > 0) {
+			  	$_SESSION['success_op'] = "1";
 			}
-			else{	    
+			else{
 			  	$_SESSION['success_op'] = "0";
-			}  
+			}
 		}else{
 			$_SESSION['success_op'] = "0";
 		}
-		
+
 		header("location: ../form/cuenta_form.php");
 	}else{
 		header("location: ../class/exit.php");
@@ -310,15 +321,15 @@ if ($_POST['gestor'] == 444) {//delete cuenta
 	$obj_cnx = new cls_cnx();
 	$valida_session = $obj_cnx->valida_session();
 	if ($valida_session == 1) {
-	
+
 		$obj_user = new cls_user(0,0,0,0,0);
 		$resul = $obj_user->delete();//consultar
-		 if ( $resul > 0) {   
-		  	$_SESSION['success_op'] = "3"; 
+		 if ( $resul > 0) {
+		  	$_SESSION['success_op'] = "3";
 		}
-		else{	    
+		else{
 		  	$_SESSION['success_op'] = "0";
-		} 
+		}
 		header("location: ../form/cuenta_form.php");
 	}else{
 		header("location: ../class/exit.php");
@@ -349,7 +360,7 @@ if ($_POST['gestor'] == 5) {//add jugador_equipo
 		if (isset($_POST['jugador-10'])) { $jugador_10 =$_POST['jugador-10'];$num_jugadores=10;$vec_jugadores['jugador'][9]=$jugador_10;}else{ $jugador_10 = null; }
 		if (isset($_POST['jugador-11'])) { $jugador_11 =$_POST['jugador-11'];$num_jugadores=11;$vec_jugadores['jugador'][10]=$jugador_11;}else{ $jugador_11 = null; }
 		if (isset($_POST['jugador-12'])) { $jugador_12 =$_POST['jugador-12'];$num_jugadores=12;$vec_jugadores['jugador'][11]=$jugador_12;}else{ $jugador_12 = null; }
-	 
+
 		if (isset($_POST['equipo-1'])) { $equipo_1 =$_POST['equipo-1'];$num_equipos=1;$vec_equipos['equipo'][0]=$equipo_1;}else{ $equipo_1 = null; }
 		if (isset($_POST['equipo-2'])) { $equipo_2 =$_POST['equipo-2'];$num_equipos=2;$vec_equipos['equipo'][1]=$equipo_2;}else{ $equipo_2 = null; }
 		if (isset($_POST['equipo-3'])) { $equipo_3 =$_POST['equipo-3'];$num_equipos=3;$vec_equipos['equipo'][2]=$equipo_3;}else{ $equipo_3 = null; }
@@ -362,14 +373,14 @@ if ($_POST['gestor'] == 5) {//add jugador_equipo
 		if (isset($_POST['equipo-10'])) { $equipo_10 =$_POST['equipo-10'];$num_equipos=10;$vec_equipos['equipo'][9]=$equipo_10;}else{ $equipo_10 = null; }
 		if (isset($_POST['equipo-11'])) { $equipo_11 =$_POST['equipo-11'];$num_equipos=11;$vec_equipos['equipo'][10]=$equipo_11;}else{ $equipo_11 = null; }
 		if (isset($_POST['equipo-12'])) { $equipo_12 =$_POST['equipo-12'];$num_equipos=12;$vec_equipos['equipo'][11]=$equipo_12;}else{ $equipo_12 = null; }
-	
+
 		$ya_posee_jugadores=0;
-		
+
 		$roww = 0;
 		$turno =0;
 		$vec_jugadores['cantidad'][0]=$num_jugadores;
 		$vec_equipos['cantidad'][0]=$num_equipos;
-		
+
 		$obj_jugador_equipo = new cls_jugador_equipo(0,0,$fk_torneo);
 		$resul_valida_torneo = $obj_jugador_equipo->valida_torneo();
 	  	if ($resul_valida_torneo->num_rows > 0 ) {
@@ -379,42 +390,42 @@ if ($_POST['gestor'] == 5) {//add jugador_equipo
 			$valores_jugadores_duplicados = 0;
 			$res = array_diff($vec_equipos['equipo'], array_diff(array_unique($vec_equipos['equipo']), array_diff_assoc($vec_equipos['equipo'], array_unique($vec_equipos['equipo']))));
 			$res2 = array_diff($vec_jugadores['jugador'], array_diff(array_unique($vec_jugadores['jugador']), array_diff_assoc($vec_jugadores['jugador'], array_unique($vec_jugadores['jugador']))));
-			foreach(array_unique($res) as $v) {			
+			foreach(array_unique($res) as $v) {
 			$valores_equipos_duplicados = 1;
-			break;    
+			break;
 			}
 			foreach(array_unique($res2) as $v2) {
-			//echo "Duplicado $v en la posicion: " .  implode(', ', array_keys($res, $v)) . '<br />';   
+			//echo "Duplicado $v en la posicion: " .  implode(', ', array_keys($res, $v)) . '<br />';
 			$valores_jugadores_duplicados = 1;
-			break;    
+			break;
 			}
 			if ($valores_equipos_duplicados == 1) {
 				//echo "hay equipos duplicados ";echo "<br>";
 				$_SESSION['success_op'] = "2";
 			}
 			if ($valores_jugadores_duplicados == 1) {
-				//echo "hay jugadoes duplicados ";echo "<br>";				
+				//echo "hay jugadoes duplicados ";echo "<br>";
 				$_SESSION['success_op'] = "2";
 			}
 			if ($valores_jugadores_duplicados ==0 && $valores_equipos_duplicados ==0) {
 				while($roww <= $vec_jugadores['cantidad'][0]){
-				$obj_jugador_equipo = new cls_jugador_equipo($vec_jugadores['jugador'][$roww],$vec_equipos['equipo'][$roww],$fk_torneo);		 
+				$obj_jugador_equipo = new cls_jugador_equipo($vec_jugadores['jugador'][$roww],$vec_equipos['equipo'][$roww],$fk_torneo);
 				$resul_jugador_equipo = $obj_jugador_equipo->insert();//consultar
 				//echo "Jugador ".$vec_jugadores['jugador'][$roww];echo "<br>";
 				//echo "Equipo ".$vec_equipos['equipo'][$roww];echo "<br>";
 				//echo "Torneo ".$fk_torneo;echo "<br>";
-				$roww++;	 
+				$roww++;
 				}
 				$_SESSION['success_op'] = "1";
 				$ya_posee_jugadores=0;
-			}			
+			}
 	  	}
 
 		if ($ya_posee_jugadores == 1) {
-			$_SESSION['success_op'] = "3"; 
+			$_SESSION['success_op'] = "3";
 			//echo "este torneo ya tiene jugadores asignados no se puede editar";
 			$ya_posee_jugadores = 0;
-		}		
+		}
 	}else{
 		header("location: ../class/exit.php");
 	}
@@ -426,7 +437,7 @@ if ($_POST['gestor'] == 55) {//Iniciar Torneo
 	$valida_session = $obj_cnx->valida_session();
 	if ($valida_session == 1) {
 		$fk_torneo_id = $_POST['edit_id'];
-				
+
 		$obj_partido = new cls_partido(0,0,0,0,0,0);
 		//$resul = $obj_partido->insert();
 		$obj_torneo = new cls_torneo(1,1);
@@ -446,7 +457,7 @@ if ($_POST['gestor'] == 55) {//Iniciar Torneo
 			 //echo "tenemos ".count($vec_equipos)."equipos";
 			 if (count($vec_equipos) == 3) {
 			 	$resul_par_ini = $obj_partido->valida_partidos_sin_iniciar();
-			 	if ($resul_par_ini->num_rows > 0) {//valida si torneo ya esta creado y turno es = 0, para no iniciarlo nuevamente	 		
+			 	if ($resul_par_ini->num_rows > 0) {//valida si torneo ya esta creado y turno es = 0, para no iniciarlo nuevamente
 			 		$_SESSION['success_op'] = "3";
 			 	}else{
 					$row =0;
@@ -470,8 +481,8 @@ if ($_POST['gestor'] == 55) {//Iniciar Torneo
 				 		}
 				 		$row++;
 				 		$obj_partido = new cls_partido($vec_equipos[$jugador_1vs]['id'],$vec_equipos[$jugador_2vs]['id'],$fk_torneo_id,0,0,$partido_actito);
-				 		$resulpar = $obj_partido->insert();		 			 		
-				 		
+				 		$resulpar = $obj_partido->insert();
+
 				 	}
 				 	//if ($resulpar->num_rows > 0) { //si ingreso partido agrega turno a torneo
 			 			$obj_torneo = new cls_torneo(0,0);
@@ -480,9 +491,9 @@ if ($_POST['gestor'] == 55) {//Iniciar Torneo
 			 				$_SESSION['success_op'] = "1";
 			 			}
 			 		//}
-			 		
+
 			 	}
-			 	
+
 			 }
 		}
 		//echo $resul;
@@ -526,14 +537,14 @@ if ($_POST['gestor'] == 55555) {//Crear partido
 		header("location: ../class/exit.php");
 	}
 }
-if ($_POST['gestor'] == 555555) {//concluir partido 
+if ($_POST['gestor'] == 555555) {//concluir partido
 	$obj_cnx = new cls_cnx();
 	$valida_session = $obj_cnx->valida_session();
 	if ($valida_session == 1) {
 
-		$partido_id = $_POST['partido_id']; 
-		$puntos1  = $_POST['puntos1']; 
-		$puntos2 = $_POST['puntos2']; 
+		$partido_id = $_POST['partido_id'];
+		$puntos1  = $_POST['puntos1'];
+		$puntos2 = $_POST['puntos2'];
 		$torneo_id =$_POST['torneo_id'];
 		$turno = $_POST['turno'];
 
@@ -583,7 +594,7 @@ if ($_POST['gestor'] == 5555555) {//concluir partido 5555555
 
 			 }
 
-			  
+
 			 echo "<pre>";
 			 print_r($vecparti);
 			 var_dump(max($vecparti['partido']['puntos1']));
@@ -593,19 +604,19 @@ if ($_POST['gestor'] == 5555555) {//concluir partido 5555555
 
 			  if (max($vecparti['partido']['puntos1']) == max($vecparti['partido']['puntos2'])) {
 			  	echo "empate todos";
-			  	
+
 			  }else{
-			  	
+
 
 			  }
 			  	if ($vecparti['partido']['puntos1'][0] == 0 && $vecparti['partido']['puntos1'][1] == 0 && $vecparti['partido']['puntos1'][2] == 0) {
-			  		 
+
 			  	}
 			  	if ($vecparti['partido']['puntos2'][0] == 0 && $vecparti['partido']['puntos2'][1] == 0 && $vecparti['partido']['puntos2'][2] == 0) {
-			  		 
+
 			  	}
-			  
-			  
+
+
 
 			$_SESSION['success_op'] = "1";
 		}else{

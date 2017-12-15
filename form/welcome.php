@@ -1,10 +1,13 @@
-<?php include("validate.php"); ?>
-<?php include("header.php");?> 
-<?php include("admin_menu.php");?> 
+<?php //include("validate.php"); ?>
+<?php 
+include("header.php"); 
+include("admin_menu.php");
+?> 
+
       <div class="jumbotron">
         <h1 class="display-3">Jumbotron heading</h1>
         <p class="lead">Invita a tus amigos a ver tus torneos </p>
-        <form action="../class/cls_gestor.php" class="form-signin" method = "post">
+        <form action="<?php print $_SESSION['base_address'] ?>class/cls_gestor.php" class="form-signin" method = "post">
           <fieldset>
            <select class="form-control" name="num_jugadores" required>
               <option value="3">3 Jugadores</option>

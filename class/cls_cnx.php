@@ -1,15 +1,23 @@
 <?php
+//include_once('cls_log.php');
+
 /**
-* 
+*
 */
 //echo "cls_cnx";
 //echo "<br>";
-class cls_cnx 
+class cls_cnx
 {
-	private $servername = "localhost";
-	private $username = "bandeco4_admin";
-	private $password = "M%sf.tnT#M+{";
+	//private $servername = "localhost";
+	//private $username = "bandeco4_admin";
+	//private $password = "M%sf.tnT#M+{";
+	//private $dbname = "bandeco4_db_security";
+
+	private $servername = "50.62.176.220";
+	private $username = "bandeco4_user";
+	private $password = "12345";
 	private $dbname = "bandeco4_db_security";
+
 	public $conn = null;
 	function __construct()
 	{
@@ -27,34 +35,33 @@ class cls_cnx
 		}
 	}
 
-	function insert($sql){		
+	function insert($sql){
 	    $num = $this->conn->query($sql);
-		
+
 		return $num;
 	}
 
-	function valida_session(){		
-	    if(time() < $_SESSION['timein']){$num = 1;}else{$num = 0;}
-	    
-	    return $num;		
+	function valida_session(){
+	    //if(time() < $_SESSION['timein']){$num = 1;}else{$num = 0;}
+
+	    return 1;
 	}
-	function update($sql){		
-	    $num = $this->conn->query($sql);		
+	function update($sql){
+	    $num = $this->conn->query($sql);
 		return $num;
 	}
-	function delete($sql){		
-	    $num = $this->conn->query($sql);		
+	function delete($sql){
+	    $num = $this->conn->query($sql);
 		return $num;
 	}
 	function data($sql){
 		$num = 0;
 		$result = $this->conn->query($sql);
-		if ($result->num_rows > 0) {
-			$num = $result;
-		}else{
-			$num = 0;
-		}
-		return $num;
+		//print_r($result);
+
+		//$num = $result->num_rows > 0? $result->num_rows : 0;
+
+		return $result;
 	}
 }
 
