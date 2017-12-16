@@ -1,11 +1,11 @@
 <?php
 
 /**
-* 
+*
 */
 //echo "cls_user";
 //echo "<br>";
-class cls_partido 
+class cls_partido
 {
 
   private $id = null;
@@ -85,17 +85,13 @@ class cls_partido
     $turno = $obj_cnx->conn->real_escape_string($this->get_turno());
     $fk_torneo = $obj_cnx->conn->real_escape_string($this->get_fk_torneo());
     $estado = 1;
-    $string ="INSERT INTO `partido`(
-    `fk_jugador_x_equipo_1`, `puntos_jugador_1`, `fk_jugador_x_equipo_2`, `puntos_jugador_2`, `turno`, `fk_torneo`, `estado`, `fk_user`) VALUES (
-    ".$fk_jugador_1.",
-    ".$puntos_jugador_1.",
-    ".$fk_jugador_2.",
-    ".$puntos_jugador_2.",
-    ".$turno.",
-    ".$fk_torneo.",
-    ".$estado.",
-    ".$login_id_1."
-    )";
+
+    $string =
+	"INSERT INTO `partido`(
+    `fk_jugador_x_equipo_1`, `puntos_jugador_1`, `fk_jugador_x_equipo_2`, `puntos_jugador_2`, `turno`, `fk_torneo`, `estado`, `fk_user`)
+	VALUES (
+	".$fk_jugador_1.",".$puntos_jugador_1.",".$fk_jugador_2.",".$puntos_jugador_2.",".$turno.",".$fk_torneo.",".$estado.",".$login_id_1.")";
+
     $result = $obj_cnx->insert($string);
 
     return $result;
@@ -128,6 +124,18 @@ class cls_partido
 
     return $result;
   }
+
+  function consultar_partidos_activos($p_torneo){
+	  $obj_cnx = new cls_cnx();
+	  $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
+	  $$p_torneo1 = $obj_cnx->conn->real_escape_string($p_torneo);
+
+	  $string ="SELECT * FROM `partido` where `estado` = 1 and fk_torneo = ".$p_torneo1;
+	  $result = $obj_cnx->data($string);
+
+	  return $result;
+  }
+
   function update($edit_id){
     $obj_cnx = new cls_cnx();
     $name1 = $obj_cnx->conn->real_escape_string($this->get_name());
@@ -145,11 +153,25 @@ class cls_partido
     $turno1 = $obj_cnx->conn->real_escape_string($this->get_turno());
     $idpartido1 = $obj_cnx->conn->real_escape_string($idpartido);
 
-    $string ="UPDATE `partido` SET `puntos_jugador_1`= ".$puntos1." , `puntos_jugador_2`= ".$puntos2.",  `turno`= ".$turno1."  WHERE `id` = ".$idpartido1 ;
+    $string ="UPDATE `partido` SET `puntos_jugador_1`= ".$puntos1." , `puntos_jugador_2`= ".$puntos2.",  `turno`= ".$turno1.",  `estado`= 1   WHERE `id` = ".$idpartido1 ;
     $result = $obj_cnx->update($string);
 
     return $result;
   }
+
+  function update_estado($idpartido, $estado){
+	  $obj_cnx = new cls_cnx();
+	  $idpartido1 = $obj_cnx->conn->real_escape_string($idpartido);
+
+	  $string ="UPDATE `partido` SET `estado` = ".$estado." WHERE `id` = ".$idpartido1 ;
+	  echo $string;
+
+	  $result = $obj_cnx->update($string);
+
+	  return $result;
+  }
+
+
   function delete($edit_id){
     $obj_cnx = new cls_cnx();
     $edit_id1 = $obj_cnx->conn->real_escape_string($edit_id);
@@ -191,11 +213,11 @@ class cls_partido
 
     $string ="SELECT torneo.id,torneo.nombre FROM `torneo` inner join `jugador_x_equipo` where torneo.id = jugador_x_equipo.fk_torneo and torneo.fk_user = ".$login_id_1." and torneo.estado = 1 and torneo.turno = 0";
     $result = $obj_cnx->data($string);
-    
+
     return $result;
   }
 
-  
+
 
 
 }

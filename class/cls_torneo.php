@@ -110,7 +110,7 @@ class cls_torneo
     $torneo_id1 = $obj_cnx->conn->real_escape_string($torneo_id);
     $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
 
-    $string ="SELECT jugador_x_equipo.id as id, jugador_x_equipo.fk_jugador as fk_jugador ,jugador_x_equipo.fk_equipo as fk_equipo,jugador_x_equipo.fk_torneo as fk_torneo , jugador.nombre as junom,jugador_x_equipo.fk_torneo, equipo.nombre as quinom FROM `jugador_x_equipo`  inner join jugador on jugador_x_equipo.fk_jugador = jugador.id inner join equipo on jugador_x_equipo.fk_equipo = equipo.id where jugador.id = jugador_x_equipo.fk_jugador and jugador.fk_user  = ".$login_id_1."  and jugador_x_equipo.fk_torneo = ".$torneo_id1;
+    $string ="SELECT id as id_partido, jugador_x_equipo.id as id, jugador_x_equipo.fk_jugador as fk_jugador ,jugador_x_equipo.fk_equipo as fk_equipo,jugador_x_equipo.fk_torneo as fk_torneo , jugador.nombre as junom,jugador_x_equipo.fk_torneo, equipo.nombre as quinom FROM `jugador_x_equipo`  inner join jugador on jugador_x_equipo.fk_jugador = jugador.id inner join equipo on jugador_x_equipo.fk_equipo = equipo.id where jugador.id = jugador_x_equipo.fk_jugador and jugador.fk_user  = ".$login_id_1."  and jugador_x_equipo.fk_torneo = ".$torneo_id1;
     $result = $obj_cnx->data($string);
 
     return $result;    

@@ -1,10 +1,6 @@
 <?php
 
-/**
-* 
-*/
-//echo "cls_user";
-//echo "<br>";
+
 class cls_juego
 {
 
@@ -42,7 +38,7 @@ class cls_juego
   function show_equipo($id){
     $obj_cnx = new cls_cnx();
     $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
-   
+
 
     $string ="SELECT * FROM `equipo` where  estado = 1 and id = ".$id." and fk_user =".$login_id_1;
     $result = $obj_cnx->data($string);
@@ -71,8 +67,18 @@ class cls_juego
     $obj_cnx = new cls_cnx();
     $login_id_1 = $obj_cnx->conn->real_escape_string($_SESSION['login']['id']);
     $id_torneo1 = $obj_cnx->conn->real_escape_string($id_torneo);
-    $string ="SELECT * FROM `partido` where fk_user =".$login_id_1." and estado = 1 and fk_torneo = ".$id_torneo1;
-    $result = $obj_cnx->data($string);
+
+	$query ="SELECT jugador, sum(puntos) as puntos
+				from(
+
+				SELECT fk_jugador_x_equipo_1 as 'jugador', puntos_jugador_1 as 'puntos' FROM `partido` where fk_user = ".$login_id_1." and estado = 1 and fk_torneo = ".$id_torneo1."
+
+				union
+
+				SELECT fk_jugador_x_equipo_2 as 'jugador', puntos_jugador_2 as 'puntos' FROM `partido` where fk_user = ".$login_id_1." and estado = 1 and fk_torneo = ".$id_torneo1."
+				) as query GROUP BY jugador order by puntos desc;";
+
+    $result = $obj_cnx->data($query);
 
     return $result;
 

@@ -5,7 +5,7 @@
 <?php include("../class/cls_juego.php"); ?>
 
 <?php
-session_start();
+
 if ($_SESSION['fk_torneo_id'] == null) {
 header("location: ../form/juego_form.php");
 }
@@ -94,7 +94,7 @@ $msj ="";
             <input type="text"  class="form-control" name="gestor" hidden value="555555" required> 
             <input type="text"  class="form-control" name="turno" hidden value="<?php echo  $turno; ?>" required> 
             <input type="text"  class="form-control" name="torneo_id" hidden value="<?php echo $_SESSION['fk_torneo_id']; ?>" required>
-            <button class="btn btn-lg btn-success" type="submit"><?php echo "Terminar"; ?></button>
+            <button class="btn btn-lg btn-success" type="submit">Terminar</button>
           </td>
         </tr>
         </form>
@@ -106,7 +106,7 @@ if ($fase == 1) {
   <form action="../class/cls_gestor.php" class="form-signin" method = "post"> 
     <input type="text"  class="form-control" name="gestor" hidden value="5555555" required>
     <input type="text"  class="form-control" name="torneo_id" hidden value="<?php echo $_SESSION['fk_torneo_id']; ?>" required>
-    <button class="btn btn-lg btn-success" type="submit"><?php echo "Sguiente Fase"; ?></button>
+    <button class="btn btn-lg btn-success" type="submit"><?php echo "Siguiente Fase"; ?></button>
   </form>
    <?php
 }

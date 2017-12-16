@@ -16,9 +16,9 @@
 							Log in
 						</a>
 					</li>
-					&nbsp;&nbsp;&nbsp;
+					<!--&nbsp;&nbsp;&nbsp;
 					<li class="nav-item">
-						<form class="form-signin" action="<?php print $_SESSION['base_address']."class/cls_gestor.php" ?>" method="post">
+						<form class="form-signin" action="<?php //print $_SESSION['base_address']."class/cls_gestor.php" ?>" method="post">
 							<div class="input-group">
 
 
@@ -30,7 +30,7 @@
 
 							</div>
 						</form>
-					</li>
+					</li>-->
 				</ul>
 			</nav>
 			<h3 class="text-muted">

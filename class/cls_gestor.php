@@ -37,7 +37,6 @@ if ($_POST['gestor'] == 0) {//login
 if ($_POST['gestor'] == 1) {//add user
 	cls_log::info("add user");
 
-
 	$obj_user = new cls_user($_POST['nickname'],$_POST['firstname'],$_POST['lastname'],$_POST['password'],$_POST['email']);
 	$resul_valida_user = $obj_user->valida_user();
 	if ($resul_valida_user->num_rows > 0) {
@@ -73,7 +72,6 @@ if ($_POST['gestor'] == 9) {// user admin
 	}
 	header("location: ../form/admin_form.php");
 }
-
 
 /********************************************************************/
 /* JUGADOR
@@ -375,65 +373,90 @@ if ($_POST['gestor'] == 55) {//Iniciar Torneo
 	$resul_equipo_jugador = $obj_torneo->show_equipo_jugador($fk_torneo_id);
 	//var_dump($resul11);
 
-	echo print_r($resul_equipo_jugador);
+	//echo print_r($resul_equipo_jugador);
 
 	if ($resul_equipo_jugador->num_rows > 0 ) {
 
-		$vec_equipos[]=null;
-		$countvec=0;
+		$vec_equipos = array();
+
 		while($row = $resul_equipo_jugador->fetch_assoc()) {
-			//echo print_r($row);
-			$vec_equipos[$countvec]['id'] =$row['id'];
-			$vec_equipos[$countvec]['fk_equipo'] =$row['fk_equipo'];
-			$vec_equipos[$countvec]['fk_jugador'] =$row['fk_jugador'];
-			$vec_equipos[$countvec]['fk_torneo'] =$row['fk_torneo'];
-			$countvec++;
+			$vec_equipos[] = $row; // id | fk_equipo | fk_jugador | fk_torneo
 		}
 
-		//echo print_r($vec_equipos);
+		$resul_par_ini = $obj_partido->valida_partidos_sin_iniciar(); //valida si torneo ya esta creado y turno es = 0, para no iniciarlo nuevamente
 
-		//echo "tenemos ".count($vec_equipos)."equipos";
-		if (count($vec_equipos) == 3) {
-			$resul_par_ini = $obj_partido->valida_partidos_sin_iniciar();
-			if ($resul_par_ini->num_rows > 0) {//valida si torneo ya esta creado y turno es = 0, para no iniciarlo nuevamente
-				$_SESSION['success_op'] = "3";
+		if (false& $resul_par_ini->num_rows > 0) {
+			$_SESSION['success_op'] = "3";
+			echo "ya se inició el torneo";
+
+		}else{
+			$esFinal = count($vec_equipos) == 2? true : false;
+			$jugadores = $vec_equipos;
+			$partidos = array();
+
+			$vs = $esFinal? 1 : rand(1, 3); // si es la final obtiene el index del jugador 2, caso contrario un index random de jugador
+
+
+			// se agregan partidos de jugador 1 con otro seleccionado aleatoriamente (o el otro finalista)
+			$partido1 = array();
+			$partido1[]= $jugadores[0];
+			$partido1[]= $jugadores[$vs];
+			$partidos[] = $partido1;
+
+
+			if(!$esFinal){
+				print var_export(count($jugadores));
+
+			    // se agregan jugadores de los restantes de la cuadrangular
+			    array_splice($jugadores, $vs, 1);
+			    array_splice($jugadores, 0, 1);
+
+				print var_export(count($jugadores));
+
+			    $partido2 = array();
+				$partido2[]= $jugadores[0];
+				$partido2[]= $jugadores[1];
+				$partidos[] = $partido2;
+			}
+
+			if($esFinal){
+			    // se agrega partido de vuelta de la final
+				$partido2 = array();
+				$partido2[]= $partidos[0][1];
+				$partido2[]= $partidos[0][0];
+				$partidos[] = $partido2;
+
 			}else{
-				$row =0;
-				while($row < 3) {
-					//echo $vec_equipos[$row]['fk_jugador'];
-					//echo "<br>";
-					if ($row == 0) {
-						$partido_actito = 1;
-						$jugador_1vs = 0;
-						$jugador_2vs = 1;
-					}
-					if ($row == 1) {
-						$partido_actito = 0;
-						$jugador_1vs = 0;
-						$jugador_2vs = 2;
-					}
-					if ($row == 2) {
-						$partido_actito = 0;
-						$jugador_1vs = 1;
-						$jugador_2vs = 2;
-					}
-					$row++;
-					$obj_partido = new cls_partido($vec_equipos[$jugador_1vs]['id'],$vec_equipos[$jugador_2vs]['id'],$fk_torneo_id,0,0,$partido_actito);
-					$resulpar = $obj_partido->insert();
 
-				}
-				//if ($resulpar->num_rows > 0) { //si ingreso partido agrega turno a torneo
-				$obj_torneo = new cls_torneo(0,0);
-				$resul = $obj_torneo->update_turno($fk_torneo_id,3);
-				echo print_r($resul);
-				if ($resul->num_rows > 0) {
-					$_SESSION['success_op'] = "1";
-				}
-				//}
+			    // Se agregan los partidos (cruzados) restantes de la cuadrangular
+
+				$partido3 = array();
+				$partido3[]= $partidos[0][0];
+				$partido3[]= $partidos[1][1];
+				$partidos[] = $partido3;
+
+				$partido4 = array();
+				$partido4[]= $partidos[0][1];
+				$partido4[]= $partidos[1][0];
+				$partidos[] = $partido4;
 
 			}
 
+			for($i = 0; $i< count($partidos); $i++){
+			    $obj_partido = new cls_partido($partidos[$i][0/*#jugador*/]['id'],$partidos[$i][1/*#jugador*/]['id'],$fk_torneo_id,0,0,$i+1/*turno*/);
+			    $obj_partido->insert();
+			}
+
+			$obj_torneo = new cls_torneo(0,0);
+			$resul = $obj_torneo->update_turno($fk_torneo_id,2);
+			echo print_r($resul);
+			if ($resul->num_rows > 0) {
+			    $_SESSION['success_op'] = "1";
+			}
+
 		}
+
+		//}
 	}
 	//echo $resul;
 	//$resul = $obj_partido->insert();
@@ -487,61 +510,108 @@ if ($_POST['gestor'] == 5555555) {//concluir partido 5555555
 
 	$torneo_id = $_POST['torneo_id'];
 
+
+
+
+
+
 	$obj_juego = new cls_juego(0,0,0,0,0,0);
 	$resulpun = $obj_juego->convierte_puntos($torneo_id);
-	if ($resulpun->num_rows > 0) {
-		$rowp = 0;
-		while($row = $resulpun->fetch_assoc()) {
-			if ($row['puntos_jugador_1'] == $row['puntos_jugador_2']) {
-				$vecparti['partido']['id'][$rowp] = $row['id'];
-				$vecparti['partido']['puntos1'][$rowp] = 1;
-				$vecparti['partido']['puntos2'][$rowp] = 1;
-				$vecparti['partido']['torneo'][$rowp] = 1;
-			}
-			if ($row['puntos_jugador_1'] > $row['puntos_jugador_2']) {
-				$vecparti['partido']['id'][$rowp] = $row['id'];
-				$vecparti['partido']['puntos1'][$rowp] = 3;
-				$vecparti['partido']['puntos2'][$rowp] = 0;
-				$vecparti['partido']['torneo'][$rowp] = 1;
-			}
-			if ($row['puntos_jugador_1'] < $row['puntos_jugador_2']) {
-				$vecparti['partido']['id'][$rowp] = $row['id'];
-				$vecparti['partido']['puntos1'][$rowp] = 0;
-				$vecparti['partido']['puntos2'][$rowp] = 3;
-				$vecparti['partido']['torneo'][$rowp] = 1;
-			}
-			$rowp++;
 
+
+	if ($resulpun->num_rows > 0) {
+		$vec_equipos = array();
+
+		while($row = $resulpun->fetch_assoc()) {
+			$vec_equipos[] = $row; // id | fk_equipo | fk_jugador | fk_torneo
+		}
+		$vec_equipos = array_chunk($vec_equipos, count($vec_equipos)/2)[0]; // obtiene la mejor mitad de jugadores, el top
+
+
+		$esFinal = count($vec_equipos) == 2? true : false;
+		$jugadores = $vec_equipos;
+		$partidos = array();
+
+		$vs = $esFinal? 1 : rand(1, 3); // si es la final obtiene el index del jugador 2, caso contrario un index random de jugador
+
+
+		// se agregan partidos de jugador 1 con otro seleccionado aleatoriamente (o el otro finalista)
+		$partido1 = array();
+		$partido1[]= $jugadores[0];
+		$partido1[]= $jugadores[$vs];
+		$partidos[] = $partido1;
+
+
+		if(!$esFinal){
+			print var_export(count($jugadores));
+
+			// se agregan jugadores de los restantes de la cuadrangular
+			array_splice($jugadores, $vs, 1);
+			array_splice($jugadores, 0, 1);
+
+			print var_export(count($jugadores));
+
+			$partido2 = array();
+			$partido2[]= $jugadores[0];
+			$partido2[]= $jugadores[1];
+			$partidos[] = $partido2;
 		}
 
-
-		echo "<pre>";
-		print_r($vecparti);
-		var_dump(max($vecparti['partido']['puntos1']));
-		var_dump(max($vecparti['partido']['puntos2']));
-
-		echo "</pre>";
-
-		if (max($vecparti['partido']['puntos1']) == max($vecparti['partido']['puntos2'])) {
-			echo "empate todos";
+		if($esFinal){
+			// se agrega partido de vuelta de la final
+			$partido2 = array();
+			$partido2[]= $partidos[0][1];
+			$partido2[]= $partidos[0][0];
+			$partidos[] = $partido2;
 
 		}else{
 
-		}
-		if ($vecparti['partido']['puntos1'][0] == 0 && $vecparti['partido']['puntos1'][1] == 0 && $vecparti['partido']['puntos1'][2] == 0) {
+			// Se agregan los partidos (cruzados) restantes de la cuadrangular
+
+			$partido3 = array();
+			$partido3[]= $partidos[0][0];
+			$partido3[]= $partidos[1][1];
+			$partidos[] = $partido3;
+
+			$partido4 = array();
+			$partido4[]= $partidos[0][1];
+			$partido4[]= $partidos[1][0];
+			$partidos[] = $partido4;
 
 		}
-		if ($vecparti['partido']['puntos2'][0] == 0 && $vecparti['partido']['puntos2'][1] == 0 && $vecparti['partido']['puntos2'][2] == 0) {
 
+		// CAMBIAR EL ESTADO A INACTIVO A LOS PARTIDOS YA JUGADOS
+		$obj_partido = new cls_partido(0,0,0,0,0,0);
+		$resul_equipo_jugador = $obj_partido->consultar_partidos_activos($torneo_id);
+
+		if ($resul_equipo_jugador->num_rows > 0 ) {
+			while($row = $resul_equipo_jugador->fetch_assoc()) {
+				//$row; // id | fk_equipo | fk_jugador | fk_torneo
+
+				$obj_partido = new cls_partido(0,0,0,0,0,0);
+				$obj_partido->update_estado($row['id'], 0);
+			}
 		}
 
+		// AGREGAR LOS NUEVOS PARTIDOS
+		for($i = 0; $i< count($partidos); $i++){
+			$obj_partido = new cls_partido($partidos[$i][0/*#jugador*/]['jugador'],$partidos[$i][1/*#jugador*/]['jugador'],$torneo_id,0,0,$i+1/*turno*/);
+			$obj_partido->insert();
+		}
+
+		$obj_torneo = new cls_torneo(0,0);
+		$resul = $obj_torneo->update_turno($torneo_id,2);
+		//echo print_r($resul);
+		if ($resul->num_rows > 0) {
+			$_SESSION['success_op'] = "1";
+		}
 
 
 		$_SESSION['success_op'] = "1";
 	}else{
 		$_SESSION['success_op'] = "0";
 	}
-	header("location: ../form/juego_form.php");
+	//header("location: ../form/juego_form.php");
 	//echo "concluir partido";
 }
 
