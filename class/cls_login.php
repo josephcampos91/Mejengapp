@@ -44,7 +44,7 @@ class cls_login
 			$resul ="<h1>Logueado</h1>";
 			if ($result->num_rows > 0) {
 				while($row = $result->fetch_assoc()) {
-					//session_start();
+					session_start();
 					$_SESSION["login"] = null;
 					$_SESSION["login"]["id"]=$row["id"];
 					$_SESSION["login"]["user_id"]=$row["user_id"];

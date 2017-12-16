@@ -1,5 +1,5 @@
 
-<?php include("validate.php"); ?>
+<?php //include("validate.php"); ?>
 <?php include("header.php");?> 
 <?php include("admin_menu.php");?> 
 <?php include("../class/cls_cnx.php");?> 

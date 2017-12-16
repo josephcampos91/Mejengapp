@@ -1,10 +1,5 @@
 <?php
 
-/**
-* 
-*/
-//echo "cls_user";
-//echo "<br>";
 class cls_torneo
 {
 
